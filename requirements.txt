@@ -10,3 +10,6 @@ python-multipart
 email-validator
 httpx
 pytest
+pyodbc
+pymysql
+python-dotenv
