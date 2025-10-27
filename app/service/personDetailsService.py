@@ -1,5 +1,7 @@
 import uuid
 from sqlalchemy.orm import Session
+
+from app.DTO.loginDTO import LoginResponse, LoginPerson
 from app.model.personDetails import PersonDetails
 from app.DTO.personDataDTO import PersonCreate
 
@@ -36,3 +38,30 @@ def create_person_service(person_data: PersonCreate, db: Session):
     db.commit()
     db.refresh(new_person)
     return new_person
+
+
+def login_person_service(data: LoginPerson, db: Session) -> LoginResponse:
+    # Fetch user by username
+    user = db.query(PersonDetails).filter(PersonDetails.username == data.username).first()
+    if not user:
+        raise ValueError("Username not found")
+
+    # Check password
+    if user.password != data.password:
+        raise ValueError("Incorrect password")
+
+    # Return a DTO/response object
+    return LoginResponse(
+        bookifyid=user.bookifyid,
+        firstname=user.firstname,
+        lastname=user.lastname,
+        phonenumber=user.phonenumber,
+        email=user.email,
+        username=user.username,
+        street=user.street,
+        apartment=user.apartment,
+        city=user.city,
+        state=user.state,
+        zipcode=user.zipcode,
+        county=user.county
+    )
